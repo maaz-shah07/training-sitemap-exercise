@@ -6,8 +6,8 @@ def main_method
     print "Enter Root URL: "
     url = gets.chomp
 
-    final_links = Array.new
-    page_array = Array.new
+    final_links = []
+    page_array = []
 
     root_protocol = URI.parse(url).scheme
     url_domain = URI.parse(url).host
@@ -59,7 +59,6 @@ def main_method
             final_links << link if new_links.is_a?(Array)
         end
     end
-    puts final_links
 
     puts "\n\n ---------------- End Getting Links ---------------- \n\n"
 
@@ -67,17 +66,8 @@ def main_method
 
     puts "---------------- Printing Results in XML Format ---------------- \n\n"
 
-    xml_builder = Nokogiri::XML::Builder.new do |xml|
-        xml.urlset('xmlns' => url) {
-            final_links.each{ |link|
-                xml.url {
-                    xml.loc link
-                }
-            }
-        }
-    end
-    puts xml_builder.to_xml
 
+    puts get_xml final_links, url
 
     puts "\n\n ------  Finished  ------ \n "
 end
@@ -89,7 +79,7 @@ def get_page(page_link)
 end
 
 def get_all_urls(url)
-    link_array = Array.new
+    link_array = []
 
     net_response = Net::HTTP.get_response(URI(url))
     parsed_data = Nokogiri::HTML.parse(net_response.body)
@@ -100,4 +90,16 @@ def get_all_urls(url)
     link_array
 end
 
+def get_xml final_links, url
+    xml_builder = Nokogiri::XML::Builder.new do |xml|
+        xml.urlset('xmlns' => url) {
+            final_links.each{ |link|
+                xml.url {
+                    xml.loc link
+                }
+            }
+        }
+    end
+    xml_builder.to_xml
+end
 main_method
