@@ -66,6 +66,20 @@ def main_method
 
 
     puts "---------------- Printing Results in XML Format ---------------- \n\n"
+
+    xml_builder = Nokogiri::XML::Builder.new do |data|
+        data.urlset('xmlns' => url) {
+            final_links.each{ |link|
+                data.url {
+                    data.loc link
+                }
+            }
+        }
+    end
+    puts xml_builder.to_xml
+
+
+    puts "\n\n ------  Finished  ------ \n "
 end
 
 def get_page(page_link)
