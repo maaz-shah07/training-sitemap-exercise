@@ -67,11 +67,11 @@ def main_method
 
     puts "---------------- Printing Results in XML Format ---------------- \n\n"
 
-    xml_builder = Nokogiri::XML::Builder.new do |data|
-        data.urlset('xmlns' => url) {
+    xml_builder = Nokogiri::XML::Builder.new do |xml|
+        xml.urlset('xmlns' => url) {
             final_links.each{ |link|
-                data.url {
-                    data.loc link
+                xml.url {
+                    xml.loc link
                 }
             }
         }
