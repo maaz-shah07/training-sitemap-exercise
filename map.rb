@@ -31,7 +31,13 @@ module XMLFomrat
         end
       end
     end
-    xml_builder.to_xml
+    xml_to_file xml_builder
+  end
+
+  def xml_to_file(xml_builder)
+    f = File.new('output.xml', 'w')
+    f.write(xml_builder.to_xml)
+    f.close
   end
 end
 
