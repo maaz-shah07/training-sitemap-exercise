@@ -3,43 +3,8 @@
 require 'net/http'
 require 'open-uri'
 require 'nokogiri'
-
-# This is the module for getting urls
-module Urls
-  def get_all_urls(url)
-    link_array = []
-
-    net_response = Net::HTTP.get_response(URI(url))
-    parsed_data = Nokogiri::HTML.parse(net_response.body)
-    get_a_tags = parsed_data.xpath('//a')
-    get_a_tags.each { |tag| link_array << tag[:href] }
-
-    link_array
-  end
-end
-
-# This is the module of printing all links in
-#  XML Fomat
-module XMLFomrat
-  def get_xml(final_links, url)
-    xml_builder = Nokogiri::XML::Builder.new do |xml|
-      xml.urlset('xmlns' => url) do
-        final_links.each do |link|
-          xml.url do
-            xml.loc link
-          end
-        end
-      end
-    end
-    xml_to_file xml_builder
-  end
-
-  def xml_to_file(xml_builder)
-    f = File.new('output.xml', 'w')
-    f.write(xml_builder.to_xml)
-    f.close
-  end
-end
+require_relative 'url_module'
+require_relative 'xml_module'
 
 # Main class that have all functionalities of Sitemap
 class SitemapBuilder
@@ -58,14 +23,14 @@ class SitemapBuilder
   end
 
   def main_method
-    p '----------------  Getting Links ---------------- \n\n'
+    puts '----------------  Getting Links ---------------- \n\n'
     @links = get_all_urls @url
 
     final_links
-    p "\n\n ---------------- End Getting Links ---------------- \n\n"
-    p "---------------- Printing Results in XML Format ---------------- \n\n"
+    puts "\n\n ---------------- End Getting Links ---------------- \n\n"
+    puts "---------------- Generating file ---------------- \n\n"
     puts get_xml @final_links, @url
-    p "\n\n ------  Finished  ------ \n "
+    puts "\n\n ------  Finished  ------ \n "
   end
 
   def get_page(page_link)
@@ -140,8 +105,3 @@ class SitemapBuilder
     @links = @links.uniq
   end
 end
-
-print 'Enter Root URL: '
-url = gets.chomp
-
-SitemapBuilder.new(url).main_method
