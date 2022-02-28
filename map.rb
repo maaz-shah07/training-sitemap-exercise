@@ -80,18 +80,24 @@ class SitemapBuilder
   end
 
   def modified_links(link)
-    if /^\w*\.\w*$/.match?(link)
-      link = "#{@root_url}/#{link}"
-    elsif %r{^/.*}.match?(link)
-      link = "#{@root_url}#{link}"
-    elsif %r{^https?://.*}.match?(link) || %r{^http?://.*}.match?(link)
+    result = check_reg_ex link
+    return false if [true, false].include? result
+
+    return false unless check_condition result
+
+    print_links result
+  end
+
+  def check_reg_ex(link)
+    case
+    when /^\w*\.\w*$/.match?(link) then link = "#{@root_url}/#{link}"
+    when %r{^/.*}.match?(link) then link = "#{@root_url}#{link}"
+    when %r{^https?://.*}.match?(link) || %r{^http?://.*}.match?(link)
       return false if URI.parse(link).scheme != @root_protocol
     else
       return false
     end
-    return false unless check_condition link
-
-    print_links link
+    link
   end
 
   def new_links(link)
