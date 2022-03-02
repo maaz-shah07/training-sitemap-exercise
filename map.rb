@@ -23,14 +23,11 @@ class SitemapBuilder
   end
 
   def main_method
-    puts '----------------  Getting Links ---------------- \n\n'
+    puts 'Getting Links....'
     @links = get_all_urls @url
-
     final_links
-    puts "\n\n ---------------- End Getting Links ---------------- \n\n"
-    puts "---------------- Generating file ---------------- \n\n"
     puts get_xml @final_links, @url
-    puts "\n\n ------  Finished  ------ \n "
+    puts 'Successfully saved to file....'
   end
 
   def get_page(page_link)
@@ -101,7 +98,7 @@ class SitemapBuilder
   def print_links(link)
     new_links = new_links link
     puts "Link ---> #{link}"
-    @final_links << link if new_links.is_a?(Array)
+    @final_links << link if new_links.is_a?(Array) && link != @root_url
     @links = @links.uniq
   end
 end
